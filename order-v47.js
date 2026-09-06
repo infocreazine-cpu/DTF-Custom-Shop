@@ -101,6 +101,14 @@
     body.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.del),1);saveCart();openCart();});
     body.querySelector('#v47-empty')?.addEventListener('click',()=>{ if(confirm('Vider complètement le panier ?')){ cart=[]; saveCart(); openCart(); } });
     body.querySelector('#v47-continue')?.addEventListener('click',close);
+    body.querySelector('#v47-order')?.addEventListener('click',e=>{
+      e.preventDefault();
+      if(typeof window.DTF_OPEN_CHECKOUT==='function'){
+        window.DTF_OPEN_CHECKOUT();
+      } else {
+        window.dispatchEvent(new Event('dtf-open-checkout'));
+      }
+    });
   }
 
   document.addEventListener('click',e=>{ const card=e.target.closest?.('.product-card'); if(!card || e.target.closest('.v47-overlay,.v47-cart,.personalize')) return; e.preventDefault(); e.stopImmediatePropagation(); open(card); },true);
