@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#06192b">
 <title>DTF Custom Shop — V45.2</title>
 <style>
 *{box-sizing:border-box} html,body{margin:0;min-height:100%;background:#06192b;font-family:Arial,Helvetica,sans-serif;color:#07182a}
@@ -205,9 +206,7 @@ button{font:inherit} .app{width:min(100vw,1024px);margin:auto;min-height:0;backg
 
 
 </div>
-
 <script>
-
 const DTF_API_BASE=(window.DTF_API_BASE||"").replace(/\/$/,"");
 function apiUrl(path){return DTF_API_BASE+path}
 function isLocalFileMode(){return location.protocol==="file:"}
@@ -582,10 +581,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   });
 
 });
-
-
-
-
 </script>
 </body>
 </html>
