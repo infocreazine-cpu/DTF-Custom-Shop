@@ -255,6 +255,13 @@ body{display:flex;justify-content:center}
   .ai-choice{grid-template-columns:1fr}
 }
 
+
+/* FULL_CARD_BUTTON_V46 */
+.product-card{cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.product-card:active{transform:scale(.99)}
+.product-card:focus-visible{outline:4px solid #0877d5;outline-offset:2px}
+.personalize{display:none!important}
+
 </style>
 </head>
 <body>
@@ -486,5 +493,28 @@ body{display:flex;justify-content:center}
   });
 })();
 </script>
+
+<script>
+// FULL_CARD_BUTTON_V46
+document.querySelectorAll('.product-card').forEach(card => {
+  card.setAttribute('role', 'button');
+  card.setAttribute('tabindex', '0');
+  const activateCard = () => {
+    const btn = card.querySelector('.personalize');
+    if (btn) btn.click();
+  };
+  card.addEventListener('click', (event) => {
+    if (event.target.closest('.personalize')) return;
+    activateCard();
+  });
+  card.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      activateCard();
+    }
+  });
+});
+</script>
+
 </body>
 </html>
