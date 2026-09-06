@@ -57,7 +57,7 @@
   }
 
   function renderCheckout(){
-    const cart=readCart(); if(!cart.length){ alert('Votre panier est vide.'); return; }
+    const cart=readCart(); if(!cart.length){ alert('Votre panier est vide.'); return false; }
     const total=cartTotal(cart);
     body.innerHTML=`<div class="v49-grid"><div class="v49-card"><h3>Coordonnées client</h3>
       <div class="v49-row"><div class="v49-field"><label>Prénom <small>(facultatif)</small></label><input id="v49-first" autocomplete="given-name"></div><div class="v49-field"><label>Nom <small>(facultatif)</small></label><input id="v49-last" autocomplete="family-name"></div></div>
@@ -70,7 +70,12 @@
     body.querySelector('#v49-pay').onclick=()=>startPayment(cart,total);
     body.querySelector('#v49-simulate').onclick=()=>simulatePayment(cart,total);
     overlay.classList.add('open');
+    overlay.scrollTop=0;
+    return true;
   }
+
+  window.DTF_OPEN_CHECKOUT = renderCheckout;
+  window.addEventListener('dtf-open-checkout', renderCheckout);
 
   async function startPayment(cart,total){
     const msg=body.querySelector('#v49-msg');
@@ -204,7 +209,8 @@
 
   document.addEventListener('click',e=>{
     const b=e.target.closest?.('#v47-order'); if(!b) return;
-    e.preventDefault(); e.stopImmediatePropagation(); renderCheckout();
+    e.preventDefault();
+    renderCheckout();
   },true);
 
   handlePaymentReturn();
