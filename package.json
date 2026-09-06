@@ -1,0 +1,9 @@
+{
+  "name": "dtf-custom-shop",
+  "version": "49.0.0",
+  "private": true,
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "stripe": "^18.5.0"
+  }
+}
