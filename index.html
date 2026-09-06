@@ -84,9 +84,206 @@ button{font:inherit} .app{width:min(100vw,1024px);margin:auto;min-height:0;backg
 .ai-pane{display:none;padding:10px}.ai-pane.active{display:block}.ai-pane textarea{width:100%;min-height:92px;border:2px solid #b8cddd;border-radius:9px;padding:10px;font:inherit;font-size:12px}
 .ai-go{width:100%;margin-top:8px;border:3px solid var(--navy);background:linear-gradient(#148cf1,#066bc8);color:#fff;border-radius:9px;padding:11px;font-weight:1000}
 .ai-go:disabled{opacity:.5}.ai-status{min-height:18px;margin-top:7px;font-size:11px;font-weight:800;color:#4d6274}.ai-examples{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}.ai-example{border:1px solid #a9bfd1;background:#fff;border-radius:999px;padding:5px 8px;font-size:10px;font-weight:800}
+
+/* V45.2 — accueil portrait avec scrolling démo */
+html,body{background:#06192b}
+body{overflow-y:auto}
+#homeView.view,#homeView.view.active{min-height:0!important;height:auto!important}
+#homeView{background:#06192b}
+.home-wrap{width:100%;aspect-ratio:3/2;overflow:hidden}
+.home-wrap img{width:100%;height:100%;object-fit:contain;display:block}
+.demo-products{
+  background:#fff9e8;
+  padding:18px 14px 34px;
+  border-top:5px solid #061b30;
+}
+.demo-products h2{
+  margin:0;
+  font-size:clamp(24px,5vw,40px);
+  color:#061b30;
+  font-weight:1000;
+}
+.demo-products .demo-sub{
+  margin:5px 0 16px;
+  color:#52677a;
+  font-weight:800;
+  font-size:13px;
+}
+.demo-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.demo-card{
+  background:#fff;
+  border:3px solid #dbe6ee;
+  border-radius:18px;
+  padding:12px;
+  min-height:210px;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 6px 16px rgba(6,27,48,.08);
+}
+.demo-visual{
+  flex:1;
+  min-height:125px;
+  border-radius:13px;
+  background:linear-gradient(145deg,#eef7ff,#fff4d4);
+  border:2px dashed #8dc7ef;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:62px;
+}
+.demo-card h3{
+  margin:10px 0 2px;
+  font-size:16px;
+  color:#061b30;
+}
+.demo-card p{
+  margin:0 0 9px;
+  font-size:11px;
+  color:#617383;
+  font-weight:700;
+  line-height:1.35;
+}
+.demo-badge{
+  align-self:flex-start;
+  background:#ffd83d;
+  color:#061b30;
+  font-size:10px;
+  font-weight:1000;
+  border-radius:999px;
+  padding:5px 8px;
+}
+.demo-end{
+  margin-top:16px;
+  padding:15px;
+  text-align:center;
+  border-radius:14px;
+  background:#0877d5;
+  color:#fff;
+  font-weight:1000;
+}
+@media(min-width:760px){
+  .demo-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .demo-card{min-height:240px}
+}
+
+
+/* V45.2 — structure borne portrait : en-tête fixe, contenu scrollable, pied fixe */
+body{
+  overflow:hidden;
+  background:#06192b;
+}
+#homeView.view,#homeView.view.active{
+  height:100vh!important;
+  min-height:100vh!important;
+  display:flex!important;
+  flex-direction:column;
+  overflow:hidden;
+}
+.home-wrap{
+  flex:0 0 auto;
+  width:100%;
+  aspect-ratio:3/2;
+  overflow:hidden;
+  background:#06192b;
+}
+.demo-products{
+  flex:1 1 auto;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:92px;
+}
+.kiosk-fixed-header{
+  position:fixed;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100vw,1024px);
+  z-index:1000;
+  background:#0877d5;
+  color:#fff;
+  border-bottom:4px solid #061b30;
+  box-shadow:0 4px 14px rgba(0,0,0,.22);
+}
+.kiosk-fixed-header .inner{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:10px 14px;
+}
+.kiosk-fixed-header .brand{
+  font-weight:1000;
+  font-size:20px;
+  line-height:1;
+}
+.kiosk-fixed-header .brand small{
+  display:block;
+  color:#ffd83d;
+  font-size:10px;
+}
+.kiosk-fixed-header .title{
+  flex:1;
+  text-align:center;
+  font-weight:1000;
+  font-size:14px;
+}
+.kiosk-fixed-footer{
+  position:fixed;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(100vw,1024px);
+  z-index:1000;
+  background:#061b30;
+  color:#fff;
+  border-top:4px solid #0877d5;
+  box-shadow:0 -4px 14px rgba(0,0,0,.22);
+}
+.kiosk-fixed-footer .inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-around;
+  gap:8px;
+  padding:9px 10px max(9px,env(safe-area-inset-bottom));
+  font-size:11px;
+  font-weight:900;
+}
+.kiosk-fixed-footer .foot-item{
+  text-align:center;
+  min-width:0;
+}
+.kiosk-fixed-footer .foot-item b{
+  display:block;
+  font-size:14px;
+  color:#ffd83d;
+}
+#homeView{
+  padding-top:58px;
+  padding-bottom:58px;
+}
+@media(max-width:560px){
+  .kiosk-fixed-header .title{font-size:12px}
+  .kiosk-fixed-header .brand{font-size:17px}
+  .kiosk-fixed-footer .inner{font-size:9px}
+  .kiosk-fixed-footer .foot-item b{font-size:12px}
+}
+
 </style>
 </head>
 <body>
+
+<div class="kiosk-fixed-header">
+  <div class="inner">
+    <div class="brand">DTF<small>CUSTOM SHOP</small></div>
+    <div class="title">PERSONNALISEZ VOTRE PRODUIT</div>
+    <div style="font-weight:1000">V45.2</div>
+  </div>
+</div>
+
 <div class="app">
 
 <section id="homeView" class="view active">
@@ -101,6 +298,24 @@ button{font:inherit} .app{width:min(100vw,1024px);margin:auto;min-height:0;backg
     <button type="button" class="hot hplacemat" data-product="placemat" aria-label="Set de table"></button>
     <button type="button" class="hot hbanner" data-product="banner" aria-label="Bâche"></button>
   </div>
+
+    <section class="demo-products" aria-label="Produits de démonstration">
+      <h2>PLUS DE PRODUITS</h2>
+      <p class="demo-sub">Produits fictifs pour tester le scrolling de la borne. Ils seront remplacés plus tard par le vrai catalogue.</p>
+      <div class="demo-grid">
+        <article class="demo-card"><div class="demo-visual">📱</div><h3>COQUE TÉLÉPHONE</h3><p>Personnalisation pleine face · modèle de démonstration.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">🥤</div><h3>GOURDE</h3><p>Impression circulaire ou logo vertical · produit fictif.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">🛍️</div><h3>TOTE BAG PREMIUM</h3><p>Grande zone centrale · variante de démonstration.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">🛋️</div><h3>COUSSIN</h3><p>Face avant personnalisable · format fictif pour la borne.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">📓</div><h3>CARNET</h3><p>Couverture personnalisable · démonstration du catalogue.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">👨‍🍳</div><h3>TABLIER</h3><p>Zone poitrine et grande zone centrale · produit fictif.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">🧩</div><h3>PUZZLE</h3><p>Impression totale · exemple pour prolonger le scrolling.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">🔑</div><h3>PORTE-CLÉS</h3><p>Petit format personnalisé · produit test.</p><span class="demo-badge">BIENTÔT</span></article>
+        <article class="demo-card"><div class="demo-visual">🖼️</div><h3>CADRE PHOTO</h3><p>Visuel plein format · exemple fictif pour la future gamme.</p><span class="demo-badge">BIENTÔT</span></article>
+      </div>
+      <div class="demo-end">FIN DU CATALOGUE DÉMO — SCROLLING OK ✓</div>
+    </section>
+
 </section>
 
 <section id="productView" class="view">
@@ -582,5 +797,15 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 });
 </script>
+
+<div class="kiosk-fixed-footer">
+  <div class="inner">
+    <div class="foot-item"><b>◆</b>QUALITÉ PRO</div>
+    <div class="foot-item"><b>⏱</b>RAPIDE & SIMPLE</div>
+    <div class="foot-item"><b>★</b>CRÉEZ</div>
+    <div class="foot-item"><b>✓</b>IMPRIMEZ</div>
+  </div>
+</div>
+
 </body>
 </html>
