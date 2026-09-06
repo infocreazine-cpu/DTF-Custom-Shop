@@ -1,0 +1,1 @@
+Restauration des photos produits d'origine. Ce fichier force un nouveau déploiement Vercel après retour au commit 2430843.
