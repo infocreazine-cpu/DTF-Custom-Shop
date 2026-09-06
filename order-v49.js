@@ -3,6 +3,7 @@
   const money = n => new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(n||0);
   const readCart = () => { try{return JSON.parse(localStorage.getItem('dtf-v47-cart')||'[]')}catch(e){return []} };
   const writeCart = c => localStorage.setItem('dtf-v47-cart',JSON.stringify(c));
+  const clearCart = () => { writeCart([]); window.dispatchEvent(new Event('dtf-cart-cleared')); };
   const unitPrice = i => PRICES[String(i.product||'').toLowerCase()] ?? 0;
   const orderNumber = () => {
     const d=new Date(), p=n=>String(n).padStart(2,'0');
@@ -83,11 +84,15 @@
   }
 
   function showPaid(order,simulated=false){
-    writeCart([]);
     body.innerHTML=`<div class="v49-card v49-success" style="max-width:760px;margin:auto"><h3>${simulated?'ENCAISSEMENT SIMULÉ':'PAIEMENT CONFIRMÉ'}</h3>${simulated?'<div class="v49-testbadge">MODE TEST — AUCUN DÉBIT</div>':''}<div class="v49-order">${order.orderNumber}</div><p><b>Total : ${money(order.total)}</b></p><button class="v49-primary" id="v49-pdf" type="button">TÉLÉCHARGER LE PDF DE PRODUCTION</button><div style="height:10px"></div><button class="v49-secondary" id="v49-finish" type="button">TERMINER</button><div id="v49-pdfmsg"></div></div>`;
     overlay.classList.add('open');
     body.querySelector('#v49-pdf').onclick=async()=>{const m=body.querySelector('#v49-pdfmsg');try{m.textContent='Génération du PDF…';await downloadProductionPdf(order);m.textContent='PDF généré.';}catch(e){m.innerHTML=`<div class="v49-error">${e.message}</div>`;}};
-    body.querySelector('#v49-finish').onclick=()=>{overlay.classList.remove('open');history.replaceState({},'',location.pathname);};
+    body.querySelector('#v49-finish').onclick=()=>{
+      clearCart();
+      localStorage.removeItem('dtf-last-order');
+      overlay.classList.remove('open');
+      history.replaceState({},'',location.pathname);
+    };
   }
 
   async function handlePaymentReturn(){
