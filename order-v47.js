@@ -98,8 +98,9 @@
   }
   function openCart(){
     state.step=3; overlay.classList.add('open'); overlay.querySelectorAll('.v47-step').forEach((el,i)=>el.classList.toggle('active',i===3));
-    body.innerHTML=`<div class="v47-card" style="max-width:900px;margin:auto"><h3>Votre panier</h3>${cart.length?`<div class="v47-summary">${cart.map((i,n)=>`<div class="v47-summary-item"><b>${esc(i.label)}</b> · ${esc(i.zoneLabel)}${TEXTILES.has(i.product)?` · ${esc(i.size)}`:''} · Qté ${i.qty} <button type="button" class="v47-secondary" data-del="${n}" style="float:right;padding:6px 10px">SUPPRIMER</button></div>`).join('')}</div><div class="v47-actions"><button class="v47-secondary" id="v47-continue" type="button">CONTINUER MES ACHATS</button><button class="v47-primary" id="v47-order" type="button">VALIDER LA COMMANDE</button></div><p class="v47-note">Étape suivante : coordonnées client, paiement et génération du PDF de production.</p>`:`<div class="v47-empty">Votre panier est vide.</div><div class="v47-actions"><button class="v47-primary" id="v47-continue" type="button">CHOISIR UN PRODUIT</button></div>`}</div>`;
+    body.innerHTML=`<div class="v47-card" style="max-width:900px;margin:auto"><h3>Votre panier</h3>${cart.length?`<div class="v47-summary">${cart.map((i,n)=>`<div class="v47-summary-item"><b>${esc(i.label)}</b> · ${esc(i.zoneLabel)}${TEXTILES.has(i.product)?` · ${esc(i.size)}`:''} · Qté ${i.qty} <button type="button" class="v47-secondary" data-del="${n}" style="float:right;padding:6px 10px">SUPPRIMER</button></div>`).join('')}</div><div class="v47-actions"><button class="v47-secondary" id="v47-empty" type="button">VIDER LE PANIER</button><button class="v47-secondary" id="v47-continue" type="button">CONTINUER MES ACHATS</button><button class="v47-primary" id="v47-order" type="button">VALIDER LA COMMANDE</button></div><p class="v47-note">Étape suivante : coordonnées client, paiement et génération du PDF de production.</p>`:`<div class="v47-empty">Votre panier est vide.</div><div class="v47-actions"><button class="v47-primary" id="v47-continue" type="button">CHOISIR UN PRODUIT</button></div>`}</div>`;
     body.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.del),1);saveCart();openCart();});
+    body.querySelector('#v47-empty')?.addEventListener('click',()=>{ if(confirm('Vider complètement le panier ?')){ cart=[]; saveCart(); openCart(); } });
     body.querySelector('#v47-continue')?.addEventListener('click',close);
     body.querySelector('#v47-order')?.addEventListener('click',()=>alert('Commande prête pour le prochain module : coordonnées, paiement et PDF production.'));
   }
@@ -113,5 +114,7 @@
     const card=e.target.closest?.('.product-card'); if(!card || !['Enter',' '].includes(e.key)) return;
     e.preventDefault(); e.stopImmediatePropagation(); open(card);
   },true);
+  window.addEventListener('storage',e=>{ if(e.key==='dtf-v47-cart'){ try{cart=JSON.parse(e.newValue||'[]')}catch(_){cart=[]} updateCartButton(); } });
+  window.addEventListener('dtf-cart-cleared',()=>{cart=[];updateCartButton();});
   updateCartButton();
 })();
