@@ -1,0 +1,47 @@
+name: Hotfix V52 cart
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+jobs:
+  patch:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch cart and cache
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('order-v47.js')
+          s=p.read_text()
+          old="state.step=0; state.size='M'; state.zone=textile()?'heart':'center'; state.qty=1; state.art=''; state.scale=100; state.rotate=0; state.x=50; state.y=45;"
+          new=old
+          s=s.replace(old,new)
+          old2="body.querySelector('#v47-add').onclick=()=>{cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:currentZone()[1],limit:currentZone()[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y});saveCart();openCart();};"
+          new2="const addToCart=()=>{ if(textile() && state.zone==='center') state.zone='heart'; const z=currentZone(); cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:z[1],limit:z[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y});saveCart();openCart(); }; body.querySelector('#v47-add').onclick=addToCart;"
+          if old2 not in s:
+              raise SystemExit('target add handler not found')
+          s=s.replace(old2,new2)
+          marker="window.addEventListener('dtf-cart-cleared',()=>{cart=[];updateCartButton();});"
+          inject="""document.addEventListener('pointerup',e=>{ const b=e.target.closest?.('#v47-add'); if(!b) return; e.preventDefault(); e.stopImmediatePropagation(); if(textile() && state.zone==='center') state.zone='heart'; const z=currentZone(); cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:z[1],limit:z[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y}); saveCart(); openCart(); },true);\n  """+marker
+          if marker not in s:
+              raise SystemExit('marker not found')
+          s=s.replace(marker,inject)
+          p.write_text(s)
+
+          idx=Path('index.html')
+          h=idx.read_text()
+          h=h.replace('/order-v47.js?v=51','/order-v47.js?v=52')
+          h=h.replace('/touch-v48.js?v=48','/touch-v48.js?v=52')
+          h=h.replace('/order-v49.js?v=51','/order-v49.js?v=52')
+          idx.write_text(h)
+          PY
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git add order-v47.js index.html
+          git commit -m "Fix add to cart touch handling V52"
+          git push origin main
