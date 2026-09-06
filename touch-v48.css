@@ -1,0 +1,5 @@
+/* V48 — gestes tactiles sur l'aperçu de placement */
+.v47-product-preview.v48-touch{touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none;overscroll-behavior:contain}
+.v47-product-preview.v48-touch.v48-touch-active{cursor:grabbing;outline:3px solid #0877d5;outline-offset:-3px}
+.v47-product-preview.v48-touch::after{content:'1 doigt : déplacer  ·  2 doigts : zoom + rotation';position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:4;background:rgba(255,255,255,.92);color:#08265b;border:1px solid #b9d9ee;border-radius:999px;padding:6px 10px;font-size:11px;font-weight:900;white-space:nowrap;pointer-events:none}
+@media(max-width:560px){.v47-product-preview.v48-touch::after{font-size:10px;max-width:92%;white-space:normal;text-align:center}}
