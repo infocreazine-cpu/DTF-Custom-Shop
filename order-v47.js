@@ -1,7 +1,7 @@
 (() => {
   const TEXTILES = new Set(['tshirt','sweat','apron']);
   const ZONES = {
-    textile:[['heart','Côté cœur','15 × 15 cm max'],['back','Dos','30 × 40 cm max'],['sleeve','Manche','10 × 10 cm max'],['center','Centre','Zone principale']],
+    textile:[['heart','Côté cœur','15 × 15 cm max'],['back','Dos','30 × 40 cm max'],['sleeve','Manche','10 × 10 cm max']],
     other:[['center','Zone principale','Format adapté au produit']]
   };
   const state = {card:null,product:'',label:'',step:0,size:'M',color:'',zone:'center',qty:1,art:'',scale:100,rotate:0,x:50,y:45};
@@ -11,7 +11,7 @@
   const esc = s => String(s ?? '').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
   const saveCart = () => { localStorage.setItem('dtf-v47-cart', JSON.stringify(cart)); updateCartButton(); };
   const textile = () => TEXTILES.has(state.product);
-  const currentZone = () => (textile()?ZONES.textile:ZONES.other).find(z=>z[0]===state.zone) || ZONES.other[0];
+  const currentZone = () => (textile()?ZONES.textile:ZONES.other).find(z=>z[0]===state.zone) || (textile()?ZONES.textile[0]:ZONES.other[0]);
 
   const cartBtn = document.createElement('button');
   cartBtn.className='v47-cart'; cartBtn.type='button'; cartBtn.addEventListener('click',()=>openCart()); document.body.appendChild(cartBtn);
@@ -65,9 +65,7 @@
       <div class="v47-actions"><button class="v47-ai" id="v47-ai" type="button">✨ CRÉER AVEC L’IA</button><button class="v47-primary" id="v47-next" type="button" ${state.art?'':'disabled'}>PLACER LE VISUEL →</button></div>
       <p class="v47-note">Pour l’impression DTF, privilégiez un visuel net, idéalement avec fond transparent.</p></div></div>`;
     body.querySelector('#v47-file').onchange=e=>{ const f=e.target.files?.[0]; if(!f)return; const r=new FileReader(); r.onload=()=>{state.art=r.result;renderVisual();}; r.readAsDataURL(f); };
-    body.querySelector('#v47-ai').onclick=()=>{
-      const btn=state.card?.querySelector('.personalize'); close(); if(btn) setTimeout(()=>btn.click(),50);
-    };
+    body.querySelector('#v47-ai').onclick=()=>{ const btn=state.card?.querySelector('.personalize'); close(); if(btn) setTimeout(()=>btn.click(),50); };
     body.querySelector('#v47-next').onclick=()=>{state.step=2;render();};
   }
   function renderPlacement(){
@@ -80,7 +78,7 @@
       <span class="v47-label">Horizontal</span><input id="v47-x" class="v47-range" type="range" min="25" max="75" value="${state.x}">
       <span class="v47-label">Vertical</span><input id="v47-y" class="v47-range" type="range" min="20" max="75" value="${state.y}">
       <div class="v47-actions"><button class="v47-secondary" id="v47-center" type="button">RECENTRER</button><button class="v47-primary" id="v47-next" type="button">VALIDER →</button></div></div></div>`;
-    body.querySelectorAll('[data-zone]').forEach(b=>b.onclick=()=>{state.zone=b.dataset.zone;if(state.zone==='heart'){state.x=42;state.y=36;state.scale=65}else if(state.zone==='back'){state.x=50;state.y=45;state.scale=130}else if(state.zone==='sleeve'){state.x=68;state.y=37;state.scale=48}else{state.x=50;state.y=45;state.scale=100}renderPlacement();});
+    body.querySelectorAll('[data-zone]').forEach(b=>b.onclick=()=>{state.zone=b.dataset.zone;if(state.zone==='heart'){state.x=42;state.y=36;state.scale=65}else if(state.zone==='back'){state.x=50;state.y=45;state.scale=130}else if(state.zone==='sleeve'){state.x=68;state.y=37;state.scale=48}renderPlacement();});
     ['scale','rotate','x','y'].forEach(k=>body.querySelector('#v47-'+k).oninput=e=>{state[k]=Number(e.target.value); body.querySelector('.v47-art')?.setAttribute('style',`left:${state.x}%;top:${state.y}%;width:${Math.max(10,24*state.scale/100)}%;transform:translate(-50%,-50%) rotate(${state.rotate}deg)`);});
     body.querySelector('#v47-center').onclick=()=>{state.x=50;state.y=45;state.rotate=0;renderPlacement();};
     body.querySelector('#v47-next').onclick=()=>{state.step=3;render();};
@@ -91,29 +89,22 @@
       ${textile()?`<div class="v47-summary-item"><b>Taille :</b> ${esc(state.size)}</div>`:''}
       <div class="v47-summary-item"><b>Zone :</b> ${esc(currentZone()[1])} — ${esc(currentZone()[2])}</div>
       <div class="v47-summary-item"><b>Quantité :</b> ${state.qty}</div></div>
-      <p class="v47-note">Le tarif et le paiement seront branchés à l’étape suivante. Cette version prépare déjà tout le parcours de personnalisation et le panier.</p>
+      <p class="v47-note">Le fichier d’impression sera généré séparément à la fin de la commande, aux dimensions de la zone choisie.</p>
       <div class="v47-actions"><button class="v47-secondary" id="v47-edit" type="button">MODIFIER</button><button class="v47-primary" id="v47-add" type="button">AJOUTER AU PANIER</button></div></div></div>`;
     body.querySelector('#v47-edit').onclick=()=>{state.step=0;render();};
     body.querySelector('#v47-add').onclick=()=>{cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:currentZone()[1],limit:currentZone()[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y});saveCart();openCart();};
   }
   function openCart(){
     state.step=3; overlay.classList.add('open'); overlay.querySelectorAll('.v47-step').forEach((el,i)=>el.classList.toggle('active',i===3));
-    body.innerHTML=`<div class="v47-card" style="max-width:900px;margin:auto"><h3>Votre panier</h3>${cart.length?`<div class="v47-summary">${cart.map((i,n)=>`<div class="v47-summary-item"><b>${esc(i.label)}</b> · ${esc(i.zoneLabel)}${TEXTILES.has(i.product)?` · ${esc(i.size)}`:''} · Qté ${i.qty} <button type="button" class="v47-secondary" data-del="${n}" style="float:right;padding:6px 10px">SUPPRIMER</button></div>`).join('')}</div><div class="v47-actions"><button class="v47-secondary" id="v47-empty" type="button">VIDER LE PANIER</button><button class="v47-secondary" id="v47-continue" type="button">CONTINUER MES ACHATS</button><button class="v47-primary" id="v47-order" type="button">VALIDER LA COMMANDE</button></div><p class="v47-note">Étape suivante : coordonnées client, paiement et génération du PDF de production.</p>`:`<div class="v47-empty">Votre panier est vide.</div><div class="v47-actions"><button class="v47-primary" id="v47-continue" type="button">CHOISIR UN PRODUIT</button></div>`}</div>`;
+    body.innerHTML=`<div class="v47-card" style="max-width:900px;margin:auto"><h3>Votre panier</h3>${cart.length?`<div class="v47-summary">${cart.map((i,n)=>`<div class="v47-summary-item"><b>${esc(i.label)}</b> · ${esc(i.zoneLabel)}${TEXTILES.has(i.product)?` · ${esc(i.size)}`:''} · Qté ${i.qty} <button type="button" class="v47-secondary" data-del="${n}" style="float:right;padding:6px 10px">SUPPRIMER</button></div>`).join('')}</div><div class="v47-actions"><button class="v47-secondary" id="v47-empty" type="button">VIDER LE PANIER</button><button class="v47-secondary" id="v47-continue" type="button">CONTINUER MES ACHATS</button><button class="v47-primary" id="v47-order" type="button">VALIDER LA COMMANDE</button></div><p class="v47-note">Étape suivante : coordonnées client, paiement et génération des fichiers de production.</p>`:`<div class="v47-empty">Votre panier est vide.</div><div class="v47-actions"><button class="v47-primary" id="v47-continue" type="button">CHOISIR UN PRODUIT</button></div>`}</div>`;
     body.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{cart.splice(Number(b.dataset.del),1);saveCart();openCart();});
     body.querySelector('#v47-empty')?.addEventListener('click',()=>{ if(confirm('Vider complètement le panier ?')){ cart=[]; saveCart(); openCart(); } });
     body.querySelector('#v47-continue')?.addEventListener('click',close);
-    body.querySelector('#v47-order')?.addEventListener('click',()=>alert('Commande prête pour le prochain module : coordonnées, paiement et PDF production.'));
+    body.querySelector('#v47-order')?.addEventListener('click',()=>alert('Commande prête pour le module coordonnées, paiement et fichiers de production.'));
   }
 
-  document.addEventListener('click',e=>{
-    const card=e.target.closest?.('.product-card');
-    if(!card || e.target.closest('.v47-overlay,.v47-cart,.personalize')) return;
-    e.preventDefault(); e.stopImmediatePropagation(); open(card);
-  },true);
-  document.addEventListener('keydown',e=>{
-    const card=e.target.closest?.('.product-card'); if(!card || !['Enter',' '].includes(e.key)) return;
-    e.preventDefault(); e.stopImmediatePropagation(); open(card);
-  },true);
+  document.addEventListener('click',e=>{ const card=e.target.closest?.('.product-card'); if(!card || e.target.closest('.v47-overlay,.v47-cart,.personalize')) return; e.preventDefault(); e.stopImmediatePropagation(); open(card); },true);
+  document.addEventListener('keydown',e=>{ const card=e.target.closest?.('.product-card'); if(!card || !['Enter',' '].includes(e.key)) return; e.preventDefault(); e.stopImmediatePropagation(); open(card); },true);
   window.addEventListener('storage',e=>{ if(e.key==='dtf-v47-cart'){ try{cart=JSON.parse(e.newValue||'[]')}catch(_){cart=[]} updateCartButton(); } });
   window.addEventListener('dtf-cart-cleared',()=>{cart=[];updateCartButton();});
   updateCartButton();
