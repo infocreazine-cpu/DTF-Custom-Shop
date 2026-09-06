@@ -92,7 +92,7 @@
       <p class="v47-note">Le fichier d’impression sera généré séparément à la fin de la commande, aux dimensions de la zone choisie.</p>
       <div class="v47-actions"><button class="v47-secondary" id="v47-edit" type="button">MODIFIER</button><button class="v47-primary" id="v47-add" type="button">AJOUTER AU PANIER</button></div></div></div>`;
     body.querySelector('#v47-edit').onclick=()=>{state.step=0;render();};
-    body.querySelector('#v47-add').onclick=()=>{cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:currentZone()[1],limit:currentZone()[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y});saveCart();openCart();};
+    const addToCart=()=>{ if(textile() && state.zone==='center') state.zone='heart'; const z=currentZone(); cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:z[1],limit:z[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y});saveCart();openCart(); }; body.querySelector('#v47-add').onclick=addToCart;
   }
   function openCart(){
     state.step=3; overlay.classList.add('open'); overlay.querySelectorAll('.v47-step').forEach((el,i)=>el.classList.toggle('active',i===3));
@@ -106,6 +106,7 @@
   document.addEventListener('click',e=>{ const card=e.target.closest?.('.product-card'); if(!card || e.target.closest('.v47-overlay,.v47-cart,.personalize')) return; e.preventDefault(); e.stopImmediatePropagation(); open(card); },true);
   document.addEventListener('keydown',e=>{ const card=e.target.closest?.('.product-card'); if(!card || !['Enter',' '].includes(e.key)) return; e.preventDefault(); e.stopImmediatePropagation(); open(card); },true);
   window.addEventListener('storage',e=>{ if(e.key==='dtf-v47-cart'){ try{cart=JSON.parse(e.newValue||'[]')}catch(_){cart=[]} updateCartButton(); } });
+  document.addEventListener('pointerup',e=>{ const b=e.target.closest?.('#v47-add'); if(!b) return; e.preventDefault(); e.stopImmediatePropagation(); if(textile() && state.zone==='center') state.zone='heart'; const z=currentZone(); cart.push({id:Date.now(),product:state.product,label:state.label,size:state.size,color:state.color,zone:state.zone,zoneLabel:z[1],limit:z[2],qty:state.qty,art:state.art,scale:state.scale,rotate:state.rotate,x:state.x,y:state.y}); saveCart(); openCart(); },true);
   window.addEventListener('dtf-cart-cleared',()=>{cart=[];updateCartButton();});
   updateCartButton();
 })();
